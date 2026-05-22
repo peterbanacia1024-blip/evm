@@ -4,10 +4,16 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
-public class RegisterUserRequest(){
+public class RegisterUserRequest {
     
     @NotBlank
-    private String username;
+    private String firstName;
+
+    @NotBlank
+    private String lastName;
+
+    @NotBlank
+    private String contactNumber;
 
     @Email
     @NotBlank
@@ -17,8 +23,16 @@ public class RegisterUserRequest(){
     @NotBlank
     private String password;
 
-    public String getUsername(){
-        return username;
+    public String getFirstName(){
+        return firstName;
+    }
+
+    public String getLastName(){
+        return lastName;
+    }
+
+    public String getContactNumber(){
+        return contactNumber;
     }
 
     public String getEmail(){
@@ -26,6 +40,6 @@ public class RegisterUserRequest(){
     }
 
     public String getPassword(){
-        return password
+        return password;
     }
 }

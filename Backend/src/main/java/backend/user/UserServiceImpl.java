@@ -2,8 +2,10 @@ package backend.user;
 
 import backend.user.dto.RegisterUserRequest;
 import backend.user.dto.UserResponse;
+import backend.user.Role;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -22,16 +24,22 @@ public class UserServiceImpl implements UserService {
         }
 
         User user = new User();
-        user.setName(request.getName());
+        user.setFirstName(request.getFirstName());
+        user.setLastName(request.getLastName());
+        user.setContactNumber(request.getContactNumber());
         user.setEmail(request.getEmail());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
+        user.setRole(Role.USER);
 
         User savedUser = userRepository.save(user);
 
         return new UserResponse(
             savedUser.getId(),
-            savedUser.getName(),
-            savedUser.getEmail()
+            savedUser.getFirstName(),
+            savedUser.getLastName(),
+            savedUser.getContactNumber(),
+            savedUser.getEmail(),
+            savedUser.getRole()
         );
     }
 }

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Eye, EyeOff, Mail, Lock, User, Calendar } from "lucide-react";
+import { Eye, EyeOff, Mail, Lock, User, Calendar, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -11,7 +11,9 @@ import { toast } from "@/hooks/use-toast";
 const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
-    name: "",
+    firstName: "",
+    lastName: "",
+    contactNumber: "",
     email: "",
     password: "",
     confirmPassword: "",
@@ -22,29 +24,58 @@ const Register = () => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (formData.password !== formData.confirmPassword) {
-      toast({
-        title: "Passwords don't match",
-        description: "Please make sure your passwords match.",
-        variant: "destructive",
-      });
-      return;
+  const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+
+  if (formData.password !== formData.confirmPassword) {
+    toast({
+      title: "Passwords don't match",
+      description: "Please make sure your passwords match.",
+      variant: "destructive",
+    });
+    return;
+  }
+
+  if (!acceptTerms) {
+    toast({
+      title: "Accept Terms",
+      description: "Please accept the terms and conditions to continue.",
+      variant: "destructive",
+    });
+    return;
+  }
+
+  try {
+    const response = await fetch("http://localhost:8080/api/users/register", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        contactNumber: formData.contactNumber,
+        email: formData.email,
+        password: formData.password,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error("Registration failed");
     }
-    if (!acceptTerms) {
-      toast({
-        title: "Accept Terms",
-        description: "Please accept the terms and conditions to continue.",
-        variant: "destructive",
-      });
-      return;
-    }
+
     toast({
       title: "Account Created!",
-      description: "Welcome to Eventify. Please check your email to verify your account.",
+      description: "You can now sign in.",
     });
-  };
+  } catch (error) {
+    toast({
+      title: "Registration failed",
+      description: "Please try again.",
+      variant: "destructive",
+    });
+  }
+};
 
   return (
     <div className="min-h-screen bg-background flex">
@@ -81,15 +112,49 @@ const Register = () => {
           </p>
 
           <form onSubmit={handleSubmit} className="space-y-5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="firstName">First Name</Label>
+                <div className="relative">
+                  <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                  <Input
+                    id="firstName"
+                    type="text"
+                    placeholder="John"
+                    value={formData.firstName}
+                    onChange={handleChange}
+                    className="pl-10 h-12"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="lastName">Last Name</Label>
+                <div className="relative">
+                  <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                  <Input
+                    id="lastName"
+                    type="text"
+                    placeholder="Doe"
+                    value={formData.lastName}
+                    onChange={handleChange}
+                    className="pl-10 h-12"
+                    required
+                  />
+                </div>
+              </div>
+            </div>
+
             <div className="space-y-2">
-              <Label htmlFor="name">Full Name</Label>
+              <Label htmlFor="contactNumber">Contact Number</Label>
               <div className="relative">
-                <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                 <Input
-                  id="name"
-                  type="text"
-                  placeholder="John Doe"
-                  value={formData.name}
+                  id="contactNumber"
+                  type="tel"
+                  placeholder="0912 345 6789"
+                  value={formData.contactNumber}
                   onChange={handleChange}
                   className="pl-10 h-12"
                   required
