@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Eye, EyeOff, Mail, Lock, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,52 +9,17 @@ import { Separator } from "@/components/ui/separator";
 import { toast } from "@/hooks/use-toast";
 
 const Login = () => {
-  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
-    try {
-      const response = await fetch("http://localhost:8080/api/users/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email,
-          password,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Login failed");
-      }
-
-      const user = await response.json();
-
-      if (rememberMe) {
-        localStorage.setItem("currentUser", JSON.stringify(user));
-      } else {
-        sessionStorage.setItem("currentUser", JSON.stringify(user));
-      }
-
-      toast({
-        title: "Login Successful!",
-        description: "Welcome back to Eventify.",
-      });
-
-      navigate(user.role === "ADMIN" ? "/admin" : "/events");
-    } catch (error) {
-      toast({
-        title: "Login failed",
-        description: "Invalid email or password.",
-        variant: "destructive",
-      });
-    }
+    toast({
+      title: "Login Successful!",
+      description: "Welcome back to Eventify.",
+    });
   };
 
   return (

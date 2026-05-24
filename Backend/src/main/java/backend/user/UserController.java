@@ -1,6 +1,5 @@
 package backend.user;
 
-import backend.user.dto.LoginUserRequest;
 import backend.user.dto.RegisterUserRequest;
 import backend.user.dto.UserResponse;
 import jakarta.validation.Valid;
@@ -20,10 +19,5 @@ public class UserController {
     @ResponseStatus(HttpStatus.CREATED)
     public UserResponse register(@Valid @RequestBody RegisterUserRequest request) {
         return userService.register(request);
-    }
-
-    @PostMapping("/login")
-    public UserResponse login(@Valid @RequestBody LoginUserRequest request) {
-        return userService.login(request);
     }
 }
